@@ -18,9 +18,11 @@ package uk.gov.hmrc.eoricommoncomponent.frontend.connector
 
 import javax.inject.{Inject, Named, Singleton}
 import play.api.http.HeaderNames.LOCATION
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsValue, Json}
-import play.api.mvc.Call
+import play.api.mvc.{Call, Request}
 import uk.gov.hmrc.eoricommoncomponent.frontend.config.AppConfig
+import uk.gov.hmrc.eoricommoncomponent.frontend.views.ServiceName.longName
 // import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.eoricommoncomponent.frontend.config.AddressLookupConfig
@@ -40,8 +42,8 @@ class AddressLookupFrontendConnector @Inject()(
   private lazy val initJourneyUrl = s"$baseUrl/api/v2/init"
   private def confirmJourneyUrl(id: String) = s"$baseUrl/api/confirmed?id=$id"
 
-  def initJourney(call: Call)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[String] = {
-    val addressConfig = Json.toJson(addressLookupConfig.config(s"$callback${call.url}"))
+  def initJourney(call: Call)(implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, request: Request[_]): Future[String] = {
+    val addressConfig = Json.toJson(addressLookupConfig.config(s"$callback${call.url}", longName))
 
     http.POST[JsValue, HttpResponse](initJourneyUrl, addressConfig) map { response =>
       println(s"*********************************** ${response.headers} **********************")

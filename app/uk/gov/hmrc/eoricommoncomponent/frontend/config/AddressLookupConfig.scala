@@ -21,7 +21,7 @@ import play.api.libs.json.{JsObject, Json}
 
 class AddressLookupConfig @Inject()() {
 
-  def config(continueUrl: String) =
+  def config(continueUrl: String, longName: String) =
     Json.parse(s"""{
                   |  "version": 2,
                   |  "options": {
@@ -31,12 +31,12 @@ class AddressLookupConfig @Inject()() {
                   |  "labels": {
                   |    "en": {
                   |      "appLevelLabels": {
-                  |        "navTitle": "Subscribe to Advance Tariff Rulings"
+                  |        "navTitle": "Subscribe to $longName"
                   |      }
                   |    },
                   |    "cy": {
                   |      "appLevelLabels": {
-                  |        "navTitle": "Tanysgrifio i Dyfarniadau Tariffau Uwch (ATaR)"
+                  |        "navTitle": "Tanysgrifio i $longName"
                   |      }
                   |    }
                   |  }
