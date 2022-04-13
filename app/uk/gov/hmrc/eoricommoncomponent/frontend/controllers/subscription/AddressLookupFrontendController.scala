@@ -70,15 +70,6 @@ class AddressLookupFrontendController @Inject()(
     }
   }
 
-//  def displayPage(service: Service): Action[AnyContent] =
-//    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
-//      sessionCache.addressLookupParams.map {
-//        case Some(addressLookupParams) =>
-//          Ok(prepareView(AddressLookupParams.form().fill(addressLookupParams), false, service))
-//        case _ => Ok(prepareView(AddressLookupParams.form(), false, service))
-//      }
-//    }
-
   def reviewPage(service: Service): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.map {
