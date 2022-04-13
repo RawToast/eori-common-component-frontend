@@ -21,7 +21,7 @@ import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.CdsController
 import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.auth.AuthAction
 import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.routes._
 import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.SubscriptionFlowManager
-import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupPostcodeController
+import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupFrontendController
 import uk.gov.hmrc.eoricommoncomponent.frontend.domain._
 import uk.gov.hmrc.eoricommoncomponent.frontend.domain.subscription.HowCanWeIdentifyYouSubscriptionFlowPage
 import uk.gov.hmrc.eoricommoncomponent.frontend.forms.MatchingForms.subscriptionUtrForm
@@ -109,7 +109,7 @@ class HowCanWeIdentifyYouUtrController @Inject() (
           if (inReviewMode)
             Redirect(DetermineReviewPageController.determineRoute(service))
           else if (requestSessionData.isUKJourney)
-            Redirect(AddressLookupPostcodeController.displayPage(service))
+            Redirect(AddressLookupFrontendController.onPageLoad(service))
           else
             Redirect(
               subscriptionFlowManager.stepInformation(HowCanWeIdentifyYouSubscriptionFlowPage).nextPage.url(service)

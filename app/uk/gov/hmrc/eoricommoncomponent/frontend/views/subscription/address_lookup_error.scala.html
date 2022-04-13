@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupPostcodeController
+@import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupFrontendController
 @import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.routes.AddressController
 @import uk.gov.hmrc.eoricommoncomponent.frontend.models.{Journey, Service}
 @import uk.gov.hmrc.eoricommoncomponent.frontend.views.html._
@@ -29,13 +29,13 @@
 @reenterPostcodeLink = {
     @if(isInReviewMode) {
         @govukButton(Button(
-            href = Some(AddressLookupPostcodeController.reviewPage(service).url),
+            href = Some(AddressLookupFrontendController.reviewPage(service).url),
             content = Text(messages("ecc.address-lookup.postcode.error.re-enter")),
             classes = "reenter-postcode-button"
         ))
     } else {
         @govukButton(Button(
-            href = Some(AddressLookupPostcodeController.displayPage(service).url),
+            href = Some(AddressLookupFrontendController.onPageLoad(service).url),
             content = Text(messages("ecc.address-lookup.postcode.error.re-enter")),
             classes = "reenter-postcode-button"
         ))

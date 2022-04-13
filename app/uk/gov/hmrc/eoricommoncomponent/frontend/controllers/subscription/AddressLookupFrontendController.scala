@@ -20,65 +20,83 @@ import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.eoricommoncomponent.frontend.connector.AddressLookupFrontendConnector
 import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.CdsController
 import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.auth.AuthAction
 import uk.gov.hmrc.eoricommoncomponent.frontend.domain.LoggedInUserWithEnrolments
-import uk.gov.hmrc.eoricommoncomponent.frontend.forms.models.subscription.AddressLookupParams
+import uk.gov.hmrc.eoricommoncomponent.frontend.domain.subscription.{AddressDetailsSubscriptionFlowPage, ContactDetailsSubscriptionFlowPageMigrate}
+import uk.gov.hmrc.eoricommoncomponent.frontend.forms.models.subscription.{AddressLookupParams, AddressViewModel}
 import uk.gov.hmrc.eoricommoncomponent.frontend.models.Service
 import uk.gov.hmrc.eoricommoncomponent.frontend.services.cache.{RequestSessionData, SessionCache}
 import uk.gov.hmrc.eoricommoncomponent.frontend.views.html.subscription.address_lookup_postcode
 import uk.gov.hmrc.eoricommoncomponent.frontend.services.cache.DataUnavailableException
+import uk.gov.hmrc.eoricommoncomponent.frontend.services.subscription.SubscriptionDetailsService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddressLookupPostcodeController @Inject() (
+class AddressLookupFrontendController @Inject()(
   authAction: AuthAction,
   sessionCache: SessionCache,
   requestSessionData: RequestSessionData,
   mcc: MessagesControllerComponents,
-  addressLookupPostcodePage: address_lookup_postcode
+  addressLookupPostcodePage: address_lookup_postcode,
+  addressLookupFrontendConnector: AddressLookupFrontendConnector,
+  subscriptionFlowManager: SubscriptionFlowManager,
+  subscriptionDetailsService: SubscriptionDetailsService
 )(implicit ec: ExecutionContext)
     extends CdsController(mcc) {
+  
+  def onPageLoad(service: Service): Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
+    addressLookupFrontendConnector
+      .initJourney(routes.AddressLookupFrontendController.returnFromAddressLookup(service))
+      .map(Redirect(_))
+  }
 
-  def displayPage(service: Service): Action[AnyContent] =
-    authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
-      sessionCache.addressLookupParams.map {
-        case Some(addressLookupParams) =>
-          Ok(prepareView(AddressLookupParams.form().fill(addressLookupParams), false, service))
-        case _ => Ok(prepareView(AddressLookupParams.form(), false, service))
+  def returnFromAddressLookup(service: Service, id: String):  Action[AnyContent] = authAction.ggAuthorisedUserWithEnrolmentsAction
+  { implicit request =>
+    _: LoggedInUserWithEnrolments => {
+      for {
+        address <- addressLookupFrontendConnector.getAddress(id)
+        _       <- subscriptionDetailsService.cacheAddressDetails(AddressViewModel(
+          street = address.lines.take(3).mkString(", "),
+          city = address.lines.last,
+          postcode =  address.postcode,
+          countryCode = address.country.code
+        ))
+      }  yield {
+        Redirect(subscriptionFlowManager.stepInformation(AddressDetailsSubscriptionFlowPage).nextPage.url(service))
       }
     }
+  }
 
   def reviewPage(service: Service): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.map {
         case Some(addressLookupParams) =>
-          Ok(prepareView(AddressLookupParams.form().fill(addressLookupParams), true, service))
-        case _ => Ok(prepareView(AddressLookupParams.form(), true, service))
+          Ok(prepareReviewView(AddressLookupParams.form().fill(addressLookupParams), service))
+        case _ => Ok(prepareReviewView(AddressLookupParams.form(), service))
       }
     }
 
-  private def prepareView(form: Form[AddressLookupParams], isInReviewMode: Boolean, service: Service)(implicit
+  private def prepareReviewView(form: Form[AddressLookupParams], service: Service)(implicit
     request: Request[AnyContent]
   ): HtmlFormat.Appendable = {
     val selectedOrganisationType = requestSessionData.userSelectedOrganisationType.getOrElse(
       throw DataUnavailableException("Organisation type is not cached")
     )
 
-    addressLookupPostcodePage(form, isInReviewMode, selectedOrganisationType, service)
+    addressLookupPostcodePage(form, true, selectedOrganisationType, service)
   }
 
-  def submit(service: Service, isInReviewMode: Boolean): Action[AnyContent] =
+  def submitReview(service: Service): Action[AnyContent] =
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       AddressLookupParams.form().bindFromRequest().fold(
-        formWithError => Future.successful(BadRequest(prepareView(formWithError, isInReviewMode, service))),
+        formWithError => Future.successful(BadRequest(prepareReviewView(formWithError, service))),
         validAddressParams =>
           sessionCache.saveAddressLookupParams(validAddressParams).map { _ =>
-            if (isInReviewMode) Redirect(routes.AddressLookupResultsController.reviewPage(service))
-            else Redirect(routes.AddressLookupResultsController.displayPage(service))
+            Redirect(routes.AddressLookupResultsController.reviewPage(service))
           }
       )
     }
-
 }

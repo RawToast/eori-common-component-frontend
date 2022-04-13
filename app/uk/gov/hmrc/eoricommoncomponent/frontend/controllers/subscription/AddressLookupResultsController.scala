@@ -191,8 +191,8 @@ class AddressLookupResultsController @Inject() (
     else Redirect(AddressLookupErrorController.displayNoResultsPage(service))
 
   private def redirectToPostcodePage(service: Service, isInReviewMode: Boolean): Result =
-    if (isInReviewMode) Redirect(routes.AddressLookupPostcodeController.reviewPage(service))
-    else Redirect(routes.AddressLookupPostcodeController.displayPage(service))
+    if (isInReviewMode) Redirect(routes.AddressLookupFrontendController.reviewPage(service))
+    else Redirect(routes.AddressLookupFrontendController.onPageLoad(service))
 
   private def redirectToErrorPage(service: Service, isInReviewMode: Boolean): Result =
     if (isInReviewMode) Redirect(AddressLookupErrorController.reviewErrorPage(service))
