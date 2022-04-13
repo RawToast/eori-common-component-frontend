@@ -45,8 +45,8 @@
 }
 
 @changeParamsLink = @{
-    if(isInReviewMode) uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupPostcodeController.reviewPage(service)
-    else uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupPostcodeController.displayPage(service)
+    if(isInReviewMode) uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupFrontendController.reviewPage(service)
+    else uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupFrontendController.onPageLoad(service)
 }
 
 @manualAddressLink = @{

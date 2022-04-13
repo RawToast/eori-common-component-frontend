@@ -24,7 +24,7 @@ import play.api.data.Form
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.AddressLookupPostcodeController
+import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.AddressLookupFrontendController
 import uk.gov.hmrc.eoricommoncomponent.frontend.domain.CdsOrganisationType
 import uk.gov.hmrc.eoricommoncomponent.frontend.forms.models.subscription.AddressLookupParams
 import uk.gov.hmrc.eoricommoncomponent.frontend.services.cache.{
@@ -40,7 +40,7 @@ import util.builders.AuthBuilder.withAuthorisedUser
 import scala.concurrent.ExecutionContext.global
 import scala.concurrent.Future
 
-class AddressLookupPostcodeControllerSpec extends ControllerSpec with AuthActionMock with BeforeAndAfterEach {
+class AddressLookupFrontendControllerSpec extends ControllerSpec with AuthActionMock with BeforeAndAfterEach {
 
   private val mockAuthConnector             = mock[AuthConnector]
   private val mockAuthAction                = authAction(mockAuthConnector)
@@ -48,7 +48,7 @@ class AddressLookupPostcodeControllerSpec extends ControllerSpec with AuthAction
   private val mockRequestSessionData        = mock[RequestSessionData]
   private val mockAddressLookupPostcodePage = mock[address_lookup_postcode]
 
-  private val controller = new AddressLookupPostcodeController(
+  private val controller = new AddressLookupFrontendController(
     mockAuthAction,
     mockSessionCache,
     mockRequestSessionData,
@@ -169,7 +169,7 @@ class AddressLookupPostcodeControllerSpec extends ControllerSpec with AuthAction
 
         when(mockRequestSessionData.userSelectedOrganisationType(any())).thenReturn(Some(CdsOrganisationType.Company))
 
-        val result = controller.submit(atarService, true)(postRequest("postcode" -> "incorrect"))
+        val result = controller.submitReview(atarService, true)(postRequest("postcode" -> "incorrect"))
 
         status(result) shouldBe BAD_REQUEST
         verify(mockAddressLookupPostcodePage).apply(any(), ArgumentMatchers.eq(true), any(), any())(any(), any())
@@ -183,7 +183,7 @@ class AddressLookupPostcodeControllerSpec extends ControllerSpec with AuthAction
         when(mockRequestSessionData.userSelectedOrganisationType(any())).thenReturn(Some(CdsOrganisationType.Company))
         when(mockSessionCache.saveAddressLookupParams(any())(any())).thenReturn(Future.successful((): Unit))
 
-        val result = controller.submit(atarService, false)(postRequest("postcode" -> "AA11 1AA"))
+        val result = controller.submitReview(atarService, false)(postRequest("postcode" -> "AA11 1AA"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get shouldBe "/customs-enrolment-services/atar/subscribe/address-postcode/results"
@@ -195,7 +195,7 @@ class AddressLookupPostcodeControllerSpec extends ControllerSpec with AuthAction
         when(mockRequestSessionData.userSelectedOrganisationType(any())).thenReturn(Some(CdsOrganisationType.Company))
         when(mockSessionCache.saveAddressLookupParams(any())(any())).thenReturn(Future.successful((): Unit))
 
-        val result = controller.submit(atarService, true)(postRequest("postcode" -> "AA11 1AA"))
+        val result = controller.submitReview(atarService, true)(postRequest("postcode" -> "AA11 1AA"))
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(

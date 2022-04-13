@@ -188,7 +188,7 @@
 }
 
 @addressChangeLink = @{
-    if(isAddressLookup) uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupPostcodeController.reviewPage(service)
+    if(isAddressLookup) uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupFrontendController.reviewPage(service)
     else uk.gov.hmrc.eoricommoncomponent.frontend.controllers.routes.AddressController.reviewForm(service)
 }
 

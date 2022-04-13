@@ -47,6 +47,10 @@ class AppConfig @Inject() (
   val serviceIdentifierSubscribe =
     config.get[String]("microservice.services.contact-frontend.serviceIdentifierSubscribe")
 
+  val addressLookupFrontendBaseUrl = servicesConfig.baseUrl("address-lookup-frontend")
+
+  val addressLookupCallback = config.get[String]("microservice.services.address-lookup-frontend.callback")
+
   private val feedbackLinkSubscribe = config.get[String]("external-url.feedback-survey-subscribe")
 
   def feedbackUrl(service: Service) = s"$feedbackLinkSubscribe-${service.code}"

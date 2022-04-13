@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupPostcodeController
+@import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.subscription.routes.AddressLookupFrontendController
 @import uk.gov.hmrc.eoricommoncomponent.frontend.controllers.routes.AddressController
 @import uk.gov.hmrc.eoricommoncomponent.frontend.models.{Journey, Service}
 @import uk.gov.hmrc.eoricommoncomponent.frontend.views.html._
@@ -25,9 +25,9 @@
 
 @changeLink = {
     @if(isInReviewMode) {
-        <a href="@AddressLookupPostcodeController.reviewPage(service)" class="govuk-link" id="reenter-postcode-button">@messages("cds.form.change")</a>
+        <a href="@AddressLookupFrontendController.reviewPage(service)" class="govuk-link" id="reenter-postcode-button">@messages("cds.form.change")</a>
     } else {
-        <a href="@AddressLookupPostcodeController.displayPage(service)" class="govuk-link" id="reenter-postcode-button">@messages("cds.form.change")</a>
+        <a href="@AddressLookupFrontendController.onPageLoad(service)" class="govuk-link" id="reenter-postcode-button">@messages("cds.form.change")</a>
     }
 }
 

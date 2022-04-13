@@ -54,7 +54,7 @@ class AddressLookupErrorController @Inject() (
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.map {
         case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode, service, false))
-        case _                         => Redirect(routes.AddressLookupPostcodeController.displayPage(service))
+        case _                         => Redirect(routes.AddressLookupFrontendController.onPageLoad(service))
       }
     }
 
@@ -62,7 +62,7 @@ class AddressLookupErrorController @Inject() (
     authAction.ggAuthorisedUserWithEnrolmentsAction { implicit request => _: LoggedInUserWithEnrolments =>
       sessionCache.addressLookupParams.map {
         case Some(addressLookupParams) => Ok(addressLookupNoResultsPage(addressLookupParams.postcode, service, true))
-        case _                         => Redirect(routes.AddressLookupPostcodeController.reviewPage(service))
+        case _                         => Redirect(routes.AddressLookupFrontendController.reviewPage(service))
       }
     }
 
