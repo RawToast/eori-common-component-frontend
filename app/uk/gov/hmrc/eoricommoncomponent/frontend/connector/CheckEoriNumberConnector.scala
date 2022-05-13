@@ -19,10 +19,11 @@ package uk.gov.hmrc.eoricommoncomponent.frontend.connector
 import com.google.inject.ImplementedBy
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
+import play.api.libs.json.{JsResultException, Json}
 import uk.gov.hmrc.eoricommoncomponent.frontend.config.AppConfig
 import uk.gov.hmrc.eoricommoncomponent.frontend.models.checkEori.CheckEoriResponse
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, JsValidationException, UpstreamErrorResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,6 +44,7 @@ class CheckEoriNumberConnectorImpl @Inject() (http: HttpClient, appConfig: AppCo
       .recoverWith {
         case e: UpstreamErrorResponse if e.statusCode == NOT_FOUND =>
           Future.successful(Some(false))
+        case e: JsValidationException => throw e
         case NonFatal(e) =>
           //log all upstream errors at error level and keep going
           logger.error(s"Upstream error from check-eori-number service for EORI $eori.", e)

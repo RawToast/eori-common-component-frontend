@@ -19,11 +19,13 @@ package integration
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.JsResultException
 import uk.gov.hmrc.eoricommoncomponent.frontend.connector.CheckEoriNumberConnector
 import uk.gov.hmrc.http._
 import util.externalservices.CheckEoriNumberService
 import util.externalservices.ExternalServicesConfig._
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class CheckEoriNumberConnectorSpec extends IntegrationTestsSpec with ScalaFutures {
@@ -71,6 +73,18 @@ class CheckEoriNumberConnectorSpec extends IntegrationTestsSpec with ScalaFuture
       val eori = "GB89898989898989"
       CheckEoriNumberService.returnEoriUndeterminedCheck(eori)
       connector.check(eori).futureValue mustBe Some(true)
+    }
+
+    "return an empty response from a HTTP response containing an empty JSON array" in {
+      val eori = "GB89898989898989"
+      CheckEoriNumberService.returnEoriEmptyCheck(eori)
+      connector.check(eori).futureValue mustBe None
+    }
+
+    "throw an exception from a HTTP response containing an unexpected JSON payload" in {
+      val eori = "GB89898989898989"
+      CheckEoriNumberService.returnEoriInvalidPayloadCheck(eori)
+      assertThrows[JsValidationException](await(connector.check(eori)))
     }
   }
 

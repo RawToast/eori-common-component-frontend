@@ -48,6 +48,12 @@ object CheckEoriNumberService {
   def returnEoriUndeterminedCheck(eori: String): Unit =
     stubTheCheckEoriNumberResponse(endpoint(eori), "", SERVICE_UNAVAILABLE)
 
+  def returnEoriEmptyCheck(eori: String): Unit =
+    stubTheCheckEoriNumberResponse(endpoint(eori), "[]", OK)
+
+  def returnEoriInvalidPayloadCheck(eori: String): Unit =
+    stubTheCheckEoriNumberResponse(endpoint(eori), "{}", OK)
+
   def stubTheCheckEoriNumberResponse(url: String, response: String, status: Int): Unit =
     stubFor(
       get(urlEqualTo(url))
