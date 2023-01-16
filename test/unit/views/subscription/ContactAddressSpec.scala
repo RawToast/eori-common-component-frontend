@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ class ContactAddressSpec extends ViewSpec {
       val errorSummaryDiv = docWithErrorSummary.getElementsByClass("govuk-error-summary__list").first
       val errorList       = errorSummaryDiv.getElementsByTag("li")
 
-      docWithErrorSummary.getElementById("error-summary-title").text() mustBe "There is a problem"
+      docWithErrorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
       errorList.get(0).text() mustBe "Enter the first line of your address"
       errorList.get(1).text() mustBe "Enter your town or city"
       errorList.get(2).text() mustBe "Enter a valid country name"

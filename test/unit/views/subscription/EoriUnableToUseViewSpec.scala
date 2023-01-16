@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ class EoriUnableToUseViewSpec extends ViewSpec {
 
     "display error summary" in {
 
-      docWithErrorSummary.getElementById("error-summary-title").text() mustBe "There is a problem"
+      docWithErrorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
       docWithErrorSummary.getElementsByClass(
         "govuk-error-summary__list"
       ).text() mustBe "Select what you would like to do"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,8 +106,8 @@ class HaveUtrSubscriptionSpec extends ViewSpec {
 
   "Form with no option selected" should {
     "display proper message page level" in {
-      notSelectedIndividualDoc.body.getElementById("error-summary-title").text mustBe "There is a problem"
-      notSelectedCompanyDoc.body.getElementById("error-summary-title").text mustBe "There is a problem"
+      notSelectedIndividualDoc.body.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      notSelectedCompanyDoc.body.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       notSelectedIndividualDoc.body
         .getElementsByAttributeValue("href", "#have-utr-true")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ object SessionBuilder {
     userId: String,
     form: Map[String, String]
   ): FakeRequest[AnyContentAsFormUrlEncoded] =
-    buildRequestWithSession(userId).withFormUrlEncodedBody(form.toList: _*)
+    buildRequestWithSession(userId).withMethod("POST").withFormUrlEncodedBody(form.toList: _*)
 
   def buildRequestWithFormValues(form: Map[String, String]): FakeRequest[AnyContentAsFormUrlEncoded] =
     buildRequestWithSessionNoUserAndToken.withFormUrlEncodedBody(form.toList: _*)
